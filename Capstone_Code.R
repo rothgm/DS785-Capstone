@@ -213,6 +213,6 @@ avg_combined_df <- data.frame(dates = c("10/03","10/10","10/17","10/24","10/31",
                               avg_combined = c(summary(cleaned_10_03$combined)[4],summary(cleaned_10_10$combined)[4],summary(cleaned_10_17$combined)[4],summary(cleaned_10_24$combined)[4],summary(cleaned_10_31$combined)[4],summary(cleaned_11_12$combined)[4]))
 
 #plot interactions by week
-barplot(avg_favorites_df$avg_favorites, names.arg = avg_favorites_df$dates, xlab="Date", ylab="# of Favorites", main="Avg # of Favorites by Date",ylim =c(0,120))
-barplot(avg_retweets_df$avg_retweets, names.arg = avg_retweets_df$dates, xlab="Date", ylab="# of Retweets", main="Avg # of Retweets by Date",ylim=c(0,30))
-barplot(avg_combined_df$avg_combined, names.arg = avg_combined_df$dates, xlab="Date", ylab="# of Total Interactions", main="Avg # of Total Interactions by Date", ylim=c(0,140))
+barplot(avg_favorites_df$avg_favorites, names.arg = avg_favorites_df$dates, xlab="Date", ylab="Avg # of Favorites", main="Avg # of Favorites by Date",ylim =c(0,120))
+barplot(avg_retweets_df$avg_retweets, names.arg = avg_retweets_df$dates, xlab="Date", ylab="Avg # of Retweets", main="Avg # of Retweets by Date",ylim=c(0,30))
+barplot(avg_combined_df$avg_combined, names.arg = avg_combined_df$dates, xlab="Date", ylab="Avg # of Total Interactions", main="Avg # of Total Interactions by Date", ylim=c(0,140))
