@@ -1,0 +1,61 @@
+###Loading libraries and crime data
+#loading and installing libraries
+require(randomForest)
+require(forecast)
+library(randomForest)
+library(forecast)
+
+#load crime data
+chicago <- read.csv("C:/Users/grrot/Dropbox/Grad School/DS785/2024 Spring/Data/Chicago_Data.csv")
+
+###Cleaning data
+#remove ID, Case.Numbe, IUCR, FBI.Code, and Updated.On
+chicago <- chicago[c("Date","Block","Primary.Type","Description","Location.Description","Arrest","Domestic","Beat","District","Ward","Community.Area","X.Coordinate","Y.Coordinate","Year","Latitude","Longitude","Location")]
+#remove NAs in Community Area
+chicago <- chicago[!is.na(chicago$Community.Area),]
+
+###Split the data into training and testing data
+set.seed(123)
+training_index <- sample(1:nrow(chicago), size=0.7*nrow(chicago))
+training_data <- chicago[training_index,]
+testing_data <- chicago[-training_index,]
+
+
+###Random Forest
+#Run RF for classification
+RF_model <- randomForest(Community.Area~Block+Primary.Type+Description+Location.Description+Arrest+Domestic, data=training_data, ntree=10)
+#print model summary
+print(RF_model)
+#create predictions based on testing data set
+predictions <- predict(RF_model, testing_data)
+#calculate accurarcy
+accuracy <- sum(predictions == testing_data$Community.Area) / nrow(testing_data)
+print(paste("Accuracy:", round(accuracy*100,2),"%"))
+
+###ARIMA
+#putting data into time series forma
+time_series_data <- ts(chicago$Community.Area, start = c(2001, 1), frequency = 365)
+#fit ARIMA model
+ARIMA_model <- auto.arima(time_series_data)
+#check model summary
+summary(ARIMA_model)
+#create forecast using ARIMA model
+ARIMA_forecast <- forecast(ARIMA_model, h = 365)
+#visualize forecast
+plot(ARIMA_forecast)
+
+###Logistic Regression
+#converting response variable to factor
+training_data$Community.Area <- as.factor(training_data$Community.Area)
+testing_data$Community.Area <- as.factor(testing_data$Community.Area)
+#fit logistic regression model
+LogReg_model <- glm(Community.Area~+Block+Primary.Type+Description+Location.Description+Arrest+Domestic, data=training_data,family = "binomial")
+#check model summary
+summary(LogReg_model)
+#make predictions using Logistic Regression model
+LogReg_predictions <- predict(LogReg_model, training_data, type = "response")
+#convert predictions to binary values
+predicted_classes <- ifelse(LogReg_predictions > 0.5, 1, 0)
+#create confusion matrix
+confusion_matrix <- table(training_data$Community.Area, predicted_classes)
+print(confusion_matrix)
